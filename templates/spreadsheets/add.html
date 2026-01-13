@@ -3,11 +3,12 @@
 {% block title %}Adicionar Planilha{% endblock %}
 
 {% block content %}
-    <h1>Adicionar uma Nova Planilha</h1>
+    <h1 class="mb-4">Adicionar uma Nova Planilha</h1>
     <form method="post">
-        <label for="name">Nome da Planilha:</label>
-        <input type="text" id="name" name="name" required>
-        <br><br>
-        <button type="submit">Adicionar Planilha</button>
+        <div class="mb-3">
+            <label for="name" class="form-label">Nome da Planilha:</label>
+            <input type="text" class="form-control" id="name" name="name" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Adicionar Planilha</button>
     </form>
 {% endblock %}

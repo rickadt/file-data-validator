@@ -3,19 +3,28 @@
 {% block title %}Planilhas{% endblock %}
 
 {% block content %}
-    <h1>Planilhas</h1>
-    <a href="{{ url_for('spreadsheet.add_spreadsheet') }}">Adicionar Planilha</a>
-    <ul>
+    <h1 class="mb-4">Planilhas</h1>
+    <a href="{{ url_for('spreadsheet.add_spreadsheet') }}" class="btn btn-primary mb-3">Adicionar Planilha</a>
+    <div class="list-group">
         {% for spreadsheet in spreadsheets %}
-            <li>
-                {{ spreadsheet.name }}
-                <a href="{{ url_for('spreadsheet.add_rule', spreadsheet_id=spreadsheet.id) }}">Adicionar Regra</a>
-                <ul>
-                    {% for rule in spreadsheet.rules %}
-                        <li>{{ rule.column_name }} ({{ rule.data_type.value }})</li>
-                    {% endfor %}
-                </ul>
-            </li>
+            <div class="list-group-item mb-3">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">{{ spreadsheet.name }}</h5>
+                    <small>
+                        <a href="{{ url_for('spreadsheet.add_rule', spreadsheet_id=spreadsheet.id) }}" class="btn btn-sm btn-outline-secondary">Adicionar Regra</a>
+                    </small>
+                </div>
+                {% if spreadsheet.rules %}
+                    <p class="mb-1 mt-2">Regras de Validação:</p>
+                    <ul class="list-group list-group-flush">
+                        {% for rule in spreadsheet.rules %}
+                            <li class="list-group-item">{{ rule.column_name }} ({{ rule.data_type.value }}) {% if rule.date_format %}, Formato: {{ rule.date_format }} {% endif %} {% if rule.required %}(Obrigatório){% else %}(Opcional){% endif %}</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted">Nenhuma regra de validação definida.</p>
+                {% endif %}
+            </div>
         {% endfor %}
-    </ul>
+    </div>
 {% endblock %}

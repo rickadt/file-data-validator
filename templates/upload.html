@@ -3,18 +3,20 @@
 {% block title %}Upload de Planilha{% endblock %}
 
 {% block content %}
-    <h1>Upload de Planilha para Validação</h1>
+    <h1 class="mb-4">Upload de Planilha para Validação</h1>
     <form method="post" enctype="multipart/form-data">
-        <label for="file">Escolha um arquivo CSV ou XLSX:</label>
-        <input type="file" id="file" name="file" accept=".csv, .xlsx">
-        <br><br>
-        <label for="spreadsheet_id">Selecione a Configuração da Planilha:</label>
-        <select name="spreadsheet_id" id="spreadsheet_id">
-            {% for spreadsheet in spreadsheets %}
-                <option value="{{ spreadsheet.id }}">{{ spreadsheet.name }}</option>
-            {% endfor %}
-        </select>
-        <br><br>
-        <button type="submit">Fazer Upload e Validar</button>
+        <div class="mb-3">
+            <label for="file" class="form-label">Escolha um arquivo CSV ou XLSX:</label>
+            <input type="file" class="form-control" id="file" name="file" accept=".csv, .xlsx">
+        </div>
+        <div class="mb-3">
+            <label for="spreadsheet_id" class="form-label">Selecione a Configuração da Planilha:</label>
+            <select name="spreadsheet_id" id="spreadsheet_id" class="form-select">
+                {% for spreadsheet in spreadsheets %}
+                    <option value="{{ spreadsheet.id }}">{{ spreadsheet.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Fazer Upload e Validar</button>
     </form>
 {% endblock %}

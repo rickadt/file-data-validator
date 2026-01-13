@@ -1,24 +1,28 @@
 {% block title %}Adicionar Regra de Validação{% endblock %}
 
 {% block content %}
-    <h1>Adicionar uma Regra de Validação para {{ spreadsheet.name }}</h1>
+    <h1 class="mb-4">Adicionar uma Regra de Validação para {{ spreadsheet.name }}</h1>
     <form method="post">
-        <label for="column_name">Nome da Coluna:</label>
-        <input type="text" id="column_name" name="column_name" required>
-        <br><br>
-        <label for="data_type">Tipo de Dado:</label>
-        <select name="data_type" id="data_type">
-            {% for data_type in data_types %}
-                <option value="{{ data_type.name }}">{{ data_type.value }}</option>
-            {% endfor %}
-        </select>
-        <br><br>
-        <label for="date_format">Formato da Data (se aplicável):</label>
-        <input type="text" id="date_format" name="date_format">
-        <br><br>
-        <input type="checkbox" id="required" name="required" value="1" checked>
-        <label for="required">Obrigatório</label>
-        <br><br>
-        <button type="submit">Adicionar Regra</button>
+        <div class="mb-3">
+            <label for="column_name" class="form-label">Nome da Coluna:</label>
+            <input type="text" class="form-control" id="column_name" name="column_name" required>
+        </div>
+        <div class="mb-3">
+            <label for="data_type" class="form-label">Tipo de Dado:</label>
+            <select name="data_type" id="data_type" class="form-select">
+                {% for data_type in data_types %}
+                    <option value="{{ data_type.name }}">{{ data_type.value }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="date_format" class="form-label">Formato da Data (se aplicável):</label>
+            <input type="text" class="form-control" id="date_format" name="date_format">
+        </div>
+        <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="required" name="required" value="1" checked>
+            <label class="form-check-label" for="required">Obrigatório</label>
+        </div>
+        <button type="submit" class="btn btn-primary">Adicionar Regra</button>
     </form>
 {% endblock %}
