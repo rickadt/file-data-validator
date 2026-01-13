@@ -1,15 +1,15 @@
 {% extends 'base.html' %}
 
-{% block title %}Spreadsheets{% endblock %}
+{% block title %}Planilhas{% endblock %}
 
 {% block content %}
-    <h1>Spreadsheets</h1>
-    <a href="{{ url_for('spreadsheet.add_spreadsheet') }}">Add Spreadsheet</a>
+    <h1>Planilhas</h1>
+    <a href="{{ url_for('spreadsheet.add_spreadsheet') }}">Adicionar Planilha</a>
     <ul>
         {% for spreadsheet in spreadsheets %}
             <li>
                 {{ spreadsheet.name }}
-                <a href="{{ url_for('spreadsheet.add_rule', spreadsheet_id=spreadsheet.id) }}">Add Rule</a>
+                <a href="{{ url_for('spreadsheet.add_rule', spreadsheet_id=spreadsheet.id) }}">Adicionar Regra</a>
                 <ul>
                     {% for rule in spreadsheet.rules %}
                         <li>{{ rule.column_name }} ({{ rule.data_type.value }})</li>

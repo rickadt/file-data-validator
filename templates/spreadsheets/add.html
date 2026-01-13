@@ -1,13 +1,13 @@
 {% extends 'base.html' %}
 
-{% block title %}Add Spreadsheet{% endblock %}
+{% block title %}Adicionar Planilha{% endblock %}
 
 {% block content %}
-    <h1>Add a New Spreadsheet</h1>
+    <h1>Adicionar uma Nova Planilha</h1>
     <form method="post">
-        <label for="name">Spreadsheet Name:</label>
+        <label for="name">Nome da Planilha:</label>
         <input type="text" id="name" name="name" required>
         <br><br>
-        <button type="submit">Add Spreadsheet</button>
+        <button type="submit">Adicionar Planilha</button>
     </form>
 {% endblock %}
