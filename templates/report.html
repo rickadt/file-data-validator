@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Validation Report{% endblock %}
+
+{% block content %}
+    <h1>Validation Report for {{ filename }}</h1>
+    {% if errors %}
+        <h2>Errors Found:</h2>
+        <ul>
+            {% for error in errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+        <a href="{{ url_for('download_report', spreadsheet_id=spreadsheet_id, filename=filename) }}">Download PDF Report</a>
+    {% else %}
+        <h2>No Errors Found!</h2>
+        <p>Your spreadsheet has been validated successfully.</p>
+    {% endif %}
+    <br>
+    <a href="{{ url_for('upload_file') }}">Upload another file</a>
+{% endblock %}

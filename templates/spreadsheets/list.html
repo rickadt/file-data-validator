@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Spreadsheets{% endblock %}
+
+{% block content %}
+    <h1>Spreadsheets</h1>
+    <a href="{{ url_for('spreadsheet.add_spreadsheet') }}">Add Spreadsheet</a>
+    <ul>
+        {% for spreadsheet in spreadsheets %}
+            <li>
+                {{ spreadsheet.name }}
+                <a href="{{ url_for('spreadsheet.add_rule', spreadsheet_id=spreadsheet.id) }}">Add Rule</a>
+                <ul>
+                    {% for rule in spreadsheet.rules %}
+                        <li>{{ rule.column_name }} ({{ rule.data_type.value }})</li>
+                    {% endfor %}
+                </ul>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Validation Rule{% endblock %}
+
+{% block content %}
+    <h1>Add a Validation Rule for {{ spreadsheet.name }}</h1>
+    <form method="post">
+        <label for="column_name">Column Name:</label>
+        <input type="text" id="column_name" name="column_name" required>
+        <br><br>
+        <label for="data_type">Data Type:</label>
+        <select name="data_type" id="data_type">
+            {% for data_type in data_types %}
+                <option value="{{ data_type.name }}">{{ data_type.value }}</option>
+            {% endfor %}
+        </select>
+        <br><br>
+        <label for="date_format">Date Format (if applicable):</label>
+        <input type="text" id="date_format" name="date_format">
+        <br><br>
+        <input type="checkbox" id="required" name="required" value="1" checked>
+        <label for="required">Required</label>
+        <br><br>
+        <button type="submit">Add Rule</button>
+    </form>
+{% endblock %}

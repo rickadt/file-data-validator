@@ -1,0 +1,26 @@
+a intenção deste projeto é criar um app WEB utilizando Python com Flask para validar o formato e a tipagem dos dados de planilhas
+o sistema terá uma base de dados onde serão cadastrados as planilhas para validar
+para cada planilhas será validado as colunas, cabeçalho, tipo de dados da coluna, formato dos dados
+ex: coluna "data do lançamento" deve ser do tipo DATE e não pode conter Letras ou valores numéricos que não são datas
+    coluna "valor do lançamento" deve ser do tipo NUMERIC e não pode conter letras ou datas
+
+Criar uma interface para cadastrar as regras de validação para cada planilha
+o sistema deve permitir o cadastro de múltiplas planilhas, cada uma com suas próprias regras de validação
+as regras de validação devem incluir:
+- nome da coluna
+- tipo de dado esperado (STRING, INTEGER, FLOAT, DATE, BOOLEAN)
+- formato esperado (ex: para data, formato DD/MM/AAAA)
+- obrigatoriedade (se a coluna pode ser nula ou não)
+
+
+o sistema deve permitir o upload das planilhas em formato CSV ou XLSX
+após o upload, o sistema deve validar os dados conforme as regras cadastradas e retornar um relatório de erros encontrados
+o relatório deve indicar a linha e a coluna onde o erro foi encontrado, bem como uma descrição do erro
+o sistema deve permitir a exportação do relatório em formato PDF
+caso não contenha erro, o sistema salva a planilha no sistema de arquivo do sistema e retorna um ID único para consulta futura
+
+o sistema deve ter uma interface web simples para o upload das planilhas e visualização dos relatórios
+deve ser utilizado Flask como framework web e SQLAlchemy como ORM para a base de dados
+a base de dados será Postgres
+
+o sistema deve ser desenvolvido com boas práticas de programação, incluindo tratamento de erros, logging e testes automatizados
