@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}Arquivos Salvos{% endblock %}
+
+{% block content %}
+    <h1 class="mb-4">Planilhas Salvas</h1>
+
+    {% if files %}
+        <div class="list-group">
+            {% for file in files %}
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="mb-1">{{ file.filename }}</h5>
+                        <small class="text-muted">ID: {{ file.id }}</small>
+                    </div>
+                    <a href="{{ url_for('download_file', file_id=file.id) }}" class="btn btn-primary btn-sm">Baixar</a>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info" role="alert">
+            Nenhuma planilha salva ainda. Faça upload de uma planilha para validá-la e salvá-la.
+        </div>
+    {% endif %}
+{% endblock %}

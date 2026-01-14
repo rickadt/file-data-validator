@@ -14,6 +14,7 @@ This is a web application for validating the format and data types of spreadshee
 -   View a report of validation errors.
 -   Download the error report as a PDF.
 -   If the file is valid, it is saved with a unique ID and can be downloaded.
+-   View and download previously saved, validated spreadsheets from the "Arquivos Salvos" page.
 
 ## Technologies Used
 

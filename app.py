@@ -75,6 +75,11 @@ def download_file(file_id):
     file_record = File.query.get_or_404(file_id)
     return send_from_directory(app.config['PERMANENT_STORAGE'], file_id, as_attachment=True, download_name=file_record.filename)
 
+@app.route('/saved_files')
+def saved_files():
+    files = File.query.all()
+    return render_template('saved_files.html', files=files)
+
 if __name__ == '__main__':
     with app.app_context():
         create_tables()
