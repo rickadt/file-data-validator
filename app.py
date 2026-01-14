@@ -14,6 +14,7 @@ import shutil
 import io
 
 import re # Import the regular expression module
+from sqlalchemy import func # Import func for max
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -75,7 +76,15 @@ def upload_file():
             if errors:
                 return render_template('report.html', errors=errors, filename=filename, spreadsheet_id=spreadsheet_id)
             else:
-                new_file = File(filename=filename, spreadsheet_id=spreadsheet_id)
+                # Determine the next version
+                latest_version = db.session.query(func.max(File.version)).filter(
+                    File.spreadsheet_id == spreadsheet_id,
+                    File.filename == filename
+                ).scalar()
+                
+                new_version = (latest_version or 0) + 1
+
+                new_file = File(filename=filename, spreadsheet_id=spreadsheet_id, version=new_version)
                 db.session.add(new_file)
                 db.session.commit()
 

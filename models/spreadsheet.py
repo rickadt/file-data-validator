@@ -1,8 +1,9 @@
 from . import db
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Enum, Table
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Enum, Table, DateTime
 from sqlalchemy.orm import relationship
 import enum
 import uuid
+from datetime import datetime # Import datetime
 
 # Association table for many-to-many relationship between Spreadsheet and User
 spreadsheet_users = Table('spreadsheet_users', db.Model.metadata,
@@ -22,7 +23,7 @@ class Spreadsheet(db.Model):
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
     filename_pattern = Column(String, nullable=True) # New field for filename validation
-    rules = relationship("ValidationRule", back_populates="spreadsheet")
+    rules = relationship("ValidationRule", back_populates="spreadsheet", order_by="ValidationRule.id") # Ordered by ID
     files = relationship("File", back_populates="spreadsheet")
     users = relationship("User", secondary=spreadsheet_users, back_populates="spreadsheets")
 
@@ -44,4 +45,6 @@ class File(db.Model):
     id = Column(String, primary_key=True, default=generate_uuid)
     filename = Column(String, nullable=False)
     spreadsheet_id = Column(Integer, ForeignKey('spreadsheets.id'), nullable=False)
+    upload_timestamp = Column(DateTime, default=datetime.utcnow) # New field
+    version = Column(Integer, default=1) # New field
     spreadsheet = relationship("Spreadsheet", back_populates="files")

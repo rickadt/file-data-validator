@@ -21,20 +21,21 @@ def add_spreadsheet():
         name = request.form['name']
         filename_pattern = request.form.get('filename_pattern') # Get filename pattern
         selected_users_ids = request.form.getlist('users') # Get list of selected user IDs
-        
+
         spreadsheet = Spreadsheet(name=name, filename_pattern=filename_pattern)
-        
+
         # Add selected users to the spreadsheet
         for user_id in selected_users_ids:
             user = User.query.get(user_id)
             if user:
                 spreadsheet.users.append(user)
-        
+
         db.session.add(spreadsheet)
         db.session.commit()
         flash('Planilha adicionada com sucesso!', 'success')
         return redirect(url_for('spreadsheet.list_spreadsheets'))
     return render_template('spreadsheets/add.html', users=users)
+
 
 @spreadsheet_bp.route('/spreadsheets/<int:spreadsheet_id>/edit', methods=['GET', 'POST'])
 @login_required
@@ -45,12 +46,12 @@ def edit_spreadsheet(spreadsheet_id):
         flash('Você não tem permissão para editar esta planilha.', 'danger')
         return redirect(url_for('spreadsheet.list_spreadsheets'))
 
-    users = User.query.all() # Fetch all users for selection
-    
+    users = User.query.all()  # Fetch all users for selection
+
     if request.method == 'POST':
         spreadsheet.name = request.form['name']
         spreadsheet.filename_pattern = request.form.get('filename_pattern')
-        
+
         # Update assigned users
         selected_users_ids = [int(uid) for uid in request.form.getlist('users')]
         spreadsheet.users = [user for user in users if user.id in selected_users_ids]
