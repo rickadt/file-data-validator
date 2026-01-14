@@ -9,6 +9,15 @@
             <label for="name" class="form-label">Nome da Planilha:</label>
             <input type="text" class="form-control" id="name" name="name" required>
         </div>
+        <div class="mb-3">
+            <label for="users" class="form-label">Usuários com Permissão:</label>
+            <select name="users" id="users" class="form-select" multiple>
+                {% for user in users %}
+                    <option value="{{ user.id }}">{{ user.username }} ({{ user.sector }})</option>
+                {% endfor %}
+            </select>
+            <div class="form-text">Selecione os usuários que terão acesso a esta planilha. Segure CTRL/CMD para selecionar múltiplos.</div>
+        </div>
         <button type="submit" class="btn btn-primary">Adicionar Planilha</button>
     </form>
 {% endblock %}

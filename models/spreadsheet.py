@@ -1,8 +1,14 @@
 from . import db
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Enum
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Enum, Table
 from sqlalchemy.orm import relationship
 import enum
 import uuid
+
+# Association table for many-to-many relationship between Spreadsheet and User
+spreadsheet_users = Table('spreadsheet_users', db.Model.metadata,
+    Column('user_id', Integer, ForeignKey('users.id'), primary_key=True),
+    Column('spreadsheet_id', Integer, ForeignKey('spreadsheets.id'), primary_key=True)
+)
 
 class DataType(enum.Enum):
     STRING = "STRING"
@@ -17,6 +23,7 @@ class Spreadsheet(db.Model):
     name = Column(String, nullable=False)
     rules = relationship("ValidationRule", back_populates="spreadsheet")
     files = relationship("File", back_populates="spreadsheet")
+    users = relationship("User", secondary=spreadsheet_users, back_populates="spreadsheets")
 
 class ValidationRule(db.Model):
     __tablename__ = 'validation_rules'
