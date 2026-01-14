@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar Regra de Validação{% endblock %}
+
+{% block content %}
+    <h1 class="mb-4">Editar Regra de Validação para {{ spreadsheet.name }} (Coluna: {{ rule.column_name }})</h1>
+    <form method="post">
+        <div class="mb-3">
+            <label for="column_name" class="form-label">Nome da Coluna:</label>
+            <input type="text" class="form-control" id="column_name" name="column_name" value="{{ rule.column_name }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="data_type" class="form-label">Tipo de Dado:</label>
+            <select name="data_type" id="data_type" class="form-select">
+                {% for dt in data_types %}
+                    <option value="{{ dt.name }}" {% if dt == rule.data_type %}selected{% endif %}>{{ dt.value }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="date_format" class="form-label">Formato da Data (se aplicável):</label>
+            <input type="text" class="form-control" id="date_format" name="date_format" value="{{ rule.date_format or '' }}">
+        </div>
+        <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="required" name="required" value="1" {% if rule.required %}checked{% endif %}>
+            <label class="form-check-label" for="required">Obrigatório</label>
+        </div>
+        <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+        <a href="{{ url_for('spreadsheet.list_spreadsheets') }}" class="btn btn-secondary">Cancelar</a>
+    </form>
+{% endblock %}

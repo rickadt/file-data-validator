@@ -36,6 +36,34 @@ def add_spreadsheet():
         return redirect(url_for('spreadsheet.list_spreadsheets'))
     return render_template('spreadsheets/add.html', users=users)
 
+@spreadsheet_bp.route('/spreadsheets/<int:spreadsheet_id>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_spreadsheet(spreadsheet_id):
+    spreadsheet = Spreadsheet.query.get_or_404(spreadsheet_id)
+    # Check if current user has access to this spreadsheet
+    if current_user not in spreadsheet.users:
+        flash('Você não tem permissão para editar esta planilha.', 'danger')
+        return redirect(url_for('spreadsheet.list_spreadsheets'))
+
+    users = User.query.all() # Fetch all users for selection
+    
+    if request.method == 'POST':
+        spreadsheet.name = request.form['name']
+        spreadsheet.filename_pattern = request.form.get('filename_pattern')
+        
+        # Update assigned users
+        selected_users_ids = [int(uid) for uid in request.form.getlist('users')]
+        spreadsheet.users = [user for user in users if user.id in selected_users_ids]
+
+        db.session.commit()
+        flash('Planilha atualizada com sucesso!', 'success')
+        return redirect(url_for('spreadsheet.list_spreadsheets'))
+    
+    # For GET request, pre-select current users
+    selected_users = [user.id for user in spreadsheet.users]
+    return render_template('spreadsheets/edit.html', spreadsheet=spreadsheet, users=users, selected_users=selected_users)
+
+
 @spreadsheet_bp.route('/spreadsheets/<int:spreadsheet_id>/rules/add', methods=['GET', 'POST'])
 @login_required
 def add_rule(spreadsheet_id):
@@ -62,3 +90,36 @@ def add_rule(spreadsheet_id):
         flash('Regra adicionada com sucesso!', 'success')
         return redirect(url_for('spreadsheet.list_spreadsheets'))
     return render_template('spreadsheets/add_rule.html', spreadsheet=spreadsheet, data_types=DataType)
+
+@spreadsheet_bp.route('/spreadsheets/rules/<int:rule_id>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_rule(rule_id):
+    rule = ValidationRule.query.get_or_404(rule_id)
+    # Check if current user has access to this spreadsheet
+    if current_user not in rule.spreadsheet.users:
+        flash('Você não tem permissão para editar esta regra.', 'danger')
+        return redirect(url_for('spreadsheet.list_spreadsheets'))
+
+    if request.method == 'POST':
+        rule.column_name = request.form['column_name']
+        rule.data_type = DataType[request.form['data_type']]
+        rule.date_format = request.form.get('date_format')
+        rule.required = 'required' in request.form
+        db.session.commit()
+        flash('Regra atualizada com sucesso!', 'success')
+        return redirect(url_for('spreadsheet.list_spreadsheets'))
+    return render_template('spreadsheets/edit_rule.html', rule=rule, spreadsheet=rule.spreadsheet, data_types=DataType)
+
+@spreadsheet_bp.route('/spreadsheets/rules/<int:rule_id>/delete', methods=['POST'])
+@login_required
+def delete_rule(rule_id):
+    rule = ValidationRule.query.get_or_404(rule_id)
+    # Check if current user has access to this spreadsheet
+    if current_user not in rule.spreadsheet.users:
+        flash('Você não tem permissão para excluir esta regra.', 'danger')
+        return redirect(url_for('spreadsheet.list_spreadsheets'))
+
+    db.session.delete(rule)
+    db.session.commit()
+    flash('Regra excluída com sucesso!', 'success')
+    return redirect(url_for('spreadsheet.list_spreadsheets'))

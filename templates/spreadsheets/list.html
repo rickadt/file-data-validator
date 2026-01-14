@@ -11,14 +11,37 @@
                 <div class="d-flex w-100 justify-content-between">
                     <h5 class="mb-1">{{ spreadsheet.name }}</h5>
                     <small>
+                        <a href="{{ url_for('spreadsheet.edit_spreadsheet', spreadsheet_id=spreadsheet.id) }}" class="btn btn-sm btn-info me-2">Editar Planilha</a>
                         <a href="{{ url_for('spreadsheet.add_rule', spreadsheet_id=spreadsheet.id) }}" class="btn btn-sm btn-outline-secondary">Adicionar Regra</a>
                     </small>
                 </div>
+                {% if spreadsheet.filename_pattern %}
+                    <p class="mb-1">Padrão de Nome do Arquivo: <code>{{ spreadsheet.filename_pattern }}</code></p>
+                {% else %}
+                    <p class="mb-1 text-muted">Nenhum padrão de nome de arquivo definido.</p>
+                {% endif %}
+                {% if spreadsheet.users %}
+                    <p class="mb-1">Usuários com Acesso:</p>
+                    <ul class="list-inline">
+                        {% for user in spreadsheet.users %}
+                            <li class="list-inline-item">{{ user.username }}</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="mb-1 text-muted">Nenhum usuário com acesso definido.</p>
+                {% endif %}
+
                 {% if spreadsheet.rules %}
                     <p class="mb-1 mt-2">Regras de Validação:</p>
                     <ul class="list-group list-group-flush">
                         {% for rule in spreadsheet.rules %}
-                            <li class="list-group-item">{{ rule.column_name }} ({{ rule.data_type.value }}) {% if rule.date_format %}, Formato: {{ rule.date_format }} {% endif %} {% if rule.required %}(Obrigatório){% else %}(Opcional){% endif %}</li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>{{ rule.column_name }} ({{ rule.data_type.value }}) {% if rule.date_format %}, Formato: {{ rule.date_format }} {% endif %} {% if rule.required %}(Obrigatório){% else %}(Opcional){% endif %}</span>
+                                <small>
+                                    <a href="{{ url_for('spreadsheet.edit_rule', rule_id=rule.id) }}" class="btn btn-sm btn-outline-primary me-2">Editar</a>
+                                    <a href="{{ url_for('spreadsheet.delete_rule', rule_id=rule.id) }}" class="btn btn-sm btn-outline-danger">Excluir</a>
+                                </small>
+                            </li>
                         {% endfor %}
                     </ul>
                 {% else %}
