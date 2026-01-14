@@ -1,22 +1,22 @@
-# Spreadsheet Validator
+# Validador de Planilhas
 
-This is a web application for validating the format and data types of spreadsheets.
+Esta é uma aplicação web para validar o formato e os tipos de dados de planilhas.
 
-## Features
+## Funcionalidades
 
--   Upload spreadsheets in CSV or XLSX format.
--   Define validation rules for each spreadsheet, including:
-    -   Column name
-    -   Data type (STRING, INTEGER, FLOAT, DATE, BOOLEAN)
-    -   Date format (e.g., DD/MM/AAAA)
-    -   Required field
--   Validate uploaded files against the defined rules.
--   View a report of validation errors.
--   Download the error report as a PDF.
--   If the file is valid, it is saved with a unique ID and can be downloaded.
--   View and download previously saved, validated spreadsheets from the "Arquivos Salvos" page.
+-   Upload de planilhas nos formatos CSV ou XLSX.
+-   Definição de regras de validação para cada planilha, incluindo:
+    -   Nome da coluna
+    -   Tipo de dado (STRING, INTEGER, FLOAT, DATE, BOOLEAN)
+    -   Formato da data (ex: DD/MM/AAAA)
+    -   Campo obrigatório
+-   Validação de arquivos enviados de acordo com as regras definidas.
+-   Visualização de um relatório de erros de validação.
+-   Download do relatório de erros em PDF.
+-   Se o arquivo for válido, ele é salvo com um ID único e pode ser baixado.
+-   Visualizar e baixar planilhas previamente salvas e validadas na página "Arquivos Salvos".
 
-## Technologies Used
+## Tecnologias Utilizadas
 
 -   Python
 -   Flask
@@ -26,53 +26,53 @@ This is a web application for validating the format and data types of spreadshee
 -   Pandas
 -   FPDF
 
-## How to Run
+## Como Executar
 
-1.  **Clone the repository:**
+1.  **Clone o repositório:**
     ```bash
-    git clone <repository-url>
-    cd spreadsheet-validator
+    git clone <url-do-repositorio>
+    cd validador-planilha
     ```
 
-2.  **Start the PostgreSQL database:**
+2.  **Inicie o banco de dados PostgreSQL:**
     ```bash
     docker-compose up -d
     ```
 
-3.  **Install the dependencies:**
+3.  **Instale as dependências:**
     ```bash
     python3 -m venv .venv
     source .venv/bin/activate
     pip install -r requirements.txt
     ```
 
-4.  **Run the application:**
+4.  **Execute a aplicação:**
     ```bash
     python app.py
     ```
 
-5.  **Access the application:**
-    Open your browser and go to `http://127.0.0.1:5000`.
+5.  **Acesse a aplicação:**
+    Abra seu navegador e vá para `http://127.0.0.1:5000`.
 
-## How to Use
+## Como Usar
 
-1.  **Create a new spreadsheet configuration:**
-    -   Go to the "Spreadsheets" page.
-    -   Click on "Add Spreadsheet" and give it a name.
+1.  **Crie uma nova configuração de planilha:**
+    -   Vá para a página "Planilhas".
+    -   Clique em "Adicionar Planilha" e dê um nome a ela.
 
-2.  **Add validation rules:**
-    -   Click on "Add Rule" for the desired spreadsheet.
-    -   Fill in the form with the column name, data type, date format (if applicable), and whether the column is required.
+2.  **Adicione regras de validação:**
+    -   Clique em "Adicionar Regra" para a planilha desejada.
+    -   Preencha o formulário com o nome da coluna, tipo de dado, formato da data (se aplicável) e se a coluna é obrigatória.
 
-3.  **Upload a spreadsheet for validation:**
-    -   Go to the "Upload" page.
-    -   Choose the file and select the corresponding spreadsheet configuration.
-    -   Click on "Upload and Validate".
+3.  **Faça upload de uma planilha para validação:**
+    -   Vá para a página "Upload".
+    -   Escolha o arquivo e selecione a configuração de planilha correspondente.
+    -   Clique em "Fazer Upload e Validar".
 
-4.  **View the report:**
-    -   If there are errors, a report will be displayed.
-    -   You can download the report as a PDF.
+4.  **Visualize o relatório:**
+    -   Se houver erros, um relatório será exibido.
+    -   Você pode baixar o relatório em PDF.
 
-5.  **Download the validated file:**
-    -   If the file is valid, you will be redirected to a success page with a unique ID for the file.
-    -   You can use the provided link to download the validated file.
+5.  **Baixe o arquivo validado:**
+    -   Se o arquivo for válido, você será redirecionado para uma página de sucesso com um ID único para o arquivo.
+    -   Você pode usar o link fornecido para baixar o arquivo validado.
