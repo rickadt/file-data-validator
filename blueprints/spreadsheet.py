@@ -19,9 +19,10 @@ def add_spreadsheet():
     users = User.query.all() # Fetch all users
     if request.method == 'POST':
         name = request.form['name']
+        filename_pattern = request.form.get('filename_pattern') # Get filename pattern
         selected_users_ids = request.form.getlist('users') # Get list of selected user IDs
         
-        spreadsheet = Spreadsheet(name=name)
+        spreadsheet = Spreadsheet(name=name, filename_pattern=filename_pattern)
         
         # Add selected users to the spreadsheet
         for user_id in selected_users_ids:

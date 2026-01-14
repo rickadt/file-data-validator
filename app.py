@@ -13,6 +13,8 @@ import os
 import shutil
 import io
 
+import re # Import the regular expression module
+
 app = Flask(__name__)
 app.config.from_object(Config)
 app.config['UPLOAD_FOLDER'] = 'uploads'
@@ -53,6 +55,18 @@ def upload_file():
                 return redirect(url_for('upload_file'))
 
             filename = file.filename
+            
+            # Filename validation
+            if spreadsheet.filename_pattern:
+                try:
+                    if not re.match(spreadsheet.filename_pattern, filename):
+                        errors = [f"O nome do arquivo '{filename}' não corresponde ao padrão esperado: '{spreadsheet.filename_pattern}'"]
+                        return render_template('report.html', errors=errors, filename=filename, spreadsheet_id=spreadsheet_id)
+                except re.error:
+                    errors = [f"Padrão de nome de arquivo inválido configurado: '{spreadsheet.filename_pattern}'"]
+                    return render_template('report.html', errors=errors, filename=filename, spreadsheet_id=spreadsheet_id)
+
+
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(filepath)
 

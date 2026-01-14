@@ -21,6 +21,7 @@ class Spreadsheet(db.Model):
     __tablename__ = 'spreadsheets'
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
+    filename_pattern = Column(String, nullable=True) # New field for filename validation
     rules = relationship("ValidationRule", back_populates="spreadsheet")
     files = relationship("File", back_populates="spreadsheet")
     users = relationship("User", secondary=spreadsheet_users, back_populates="spreadsheets")

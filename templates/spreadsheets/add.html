@@ -10,6 +10,11 @@
             <input type="text" class="form-control" id="name" name="name" required>
         </div>
         <div class="mb-3">
+            <label for="filename_pattern" class="form-label">Padrão de Nome do Arquivo (Regex, opcional):</label>
+            <input type="text" class="form-control" id="filename_pattern" name="filename_pattern" placeholder="Ex: planilha-\d{4}-\d{2}.xlsx">
+            <div class="form-text">Use expressões regulares para validar o nome do arquivo enviado.</div>
+        </div>
+        <div class="mb-3">
             <label for="users" class="form-label">Usuários com Permissão:</label>
             <select name="users" id="users" class="form-select" multiple>
                 {% for user in users %}
