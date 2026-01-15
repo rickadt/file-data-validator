@@ -59,7 +59,7 @@ def edit_spreadsheet(spreadsheet_id):
         db.session.commit()
         flash('Planilha atualizada com sucesso!', 'success')
         return redirect(url_for('spreadsheet.list_spreadsheets'))
-    
+
     # For GET request, pre-select current users
     selected_users = [user.id for user in spreadsheet.users]
     return render_template('spreadsheets/edit.html', spreadsheet=spreadsheet, users=users, selected_users=selected_users)
@@ -92,6 +92,7 @@ def add_rule(spreadsheet_id):
         return redirect(url_for('spreadsheet.list_spreadsheets'))
     return render_template('spreadsheets/add_rule.html', spreadsheet=spreadsheet, data_types=DataType)
 
+
 @spreadsheet_bp.route('/spreadsheets/rules/<int:rule_id>/edit', methods=['GET', 'POST'])
 @login_required
 def edit_rule(rule_id):
@@ -110,6 +111,7 @@ def edit_rule(rule_id):
         flash('Regra atualizada com sucesso!', 'success')
         return redirect(url_for('spreadsheet.list_spreadsheets'))
     return render_template('spreadsheets/edit_rule.html', rule=rule, spreadsheet=rule.spreadsheet, data_types=DataType)
+
 
 @spreadsheet_bp.route('/spreadsheets/rules/<int:rule_id>/delete', methods=['POST'])
 @login_required

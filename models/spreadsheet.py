@@ -45,6 +45,6 @@ class File(db.Model):
     id = Column(String, primary_key=True, default=generate_uuid)
     filename = Column(String, nullable=False)
     spreadsheet_id = Column(Integer, ForeignKey('spreadsheets.id'), nullable=False)
-    upload_timestamp = Column(DateTime, default=datetime.utcnow) # New field
+    upload_timestamp = Column(DateTime, default=datetime.now) # New field
     version = Column(Integer, default=1) # New field
     spreadsheet = relationship("Spreadsheet", back_populates="files")

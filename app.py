@@ -32,9 +32,11 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'auth.login' # Define the login view
 
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
 
 @login_manager.unauthorized_handler
 def unauthorized():
@@ -42,29 +44,32 @@ def unauthorized():
         return jsonify(message="Autenticação necessária. Por favor, faça login ou forneça as credenciais."), 401
     return redirect(url_for('auth.login'))
 
+
 def create_tables():
     db.create_all()
+
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
+
 @app.route('/upload', methods=['GET', 'POST'])
-@login_required # Protect this route
+@login_required  # Protect this route
 def upload_file():
     if request.method == 'POST':
         file = request.files['file']
         spreadsheet_id = request.form['spreadsheet_id']
         if file:
             spreadsheet = Spreadsheet.query.get_or_404(spreadsheet_id)
-            
+
             # Permission check
             if current_user not in spreadsheet.users:
                 flash('Você não tem permissão para fazer upload para esta planilha.', 'danger')
                 return redirect(url_for('upload_file'))
 
             filename = file.filename
-            
+
             # Filename validation
             if spreadsheet.filename_pattern:
                 try:
@@ -74,7 +79,6 @@ def upload_file():
                 except re.error:
                     errors = [f"Padrão de nome de arquivo inválido configurado: '{spreadsheet.filename_pattern}'"]
                     return render_template('report.html', errors=errors, filename=filename, spreadsheet_id=spreadsheet_id)
-
 
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(filepath)
