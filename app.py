@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, make_response, send_from_directory, send_file
+from flask import Flask, render_template, request, redirect, url_for, make_response, send_from_directory, send_file, flash, jsonify
 from flask_login import LoginManager, login_required, current_user, login_user, logout_user
 from models import db
 from models.spreadsheet import Spreadsheet, File
@@ -6,6 +6,7 @@ from models.user import User
 from config import Config
 from blueprints.spreadsheet import spreadsheet_bp
 from blueprints.auth import auth_bp
+from blueprints.api import api_bp # Import the new API blueprint
 from utils.validator import validate_spreadsheet
 from utils.report_generator import generate_pdf_report
 import pandas as pd
@@ -25,6 +26,7 @@ app.config['SECRET_KEY'] = 'your_secret_key_here' # TODO: Change this to a stron
 db.init_app(app)
 app.register_blueprint(spreadsheet_bp)
 app.register_blueprint(auth_bp)
+app.register_blueprint(api_bp) # Register the API blueprint
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -33,6 +35,12 @@ login_manager.login_view = 'auth.login' # Define the login view
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
+@login_manager.unauthorized_handler
+def unauthorized():
+    if request.blueprint == 'api':
+        return jsonify(message="Autenticação necessária. Por favor, faça login ou forneça as credenciais."), 401
+    return redirect(url_for('auth.login'))
 
 def create_tables():
     db.create_all()
