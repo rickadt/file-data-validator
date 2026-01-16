@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}Relatórios de Downloads{% endblock %}
+
+{% block content %}
+    <h1 class="mb-4">Relatórios de Downloads</h1>
+
+    <div class="card mb-4">
+        <div class="card-header">Filtros</div>
+        <div class="card-body">
+            <form method="GET" action="{{ url_for('admin.download_reports') }}">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label for="file_id" class="form-label">Nome do Arquivo:</label>
+                        <input type="text" class="form-control" id="file_id" name="file_id" value="{{ file_id_filter or '' }}">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="username" class="form-label">Usuário:</label>
+                        <input type="text" class="form-control" id="username" name="username" value="{{ username_filter or '' }}">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="start_date" class="form-label">Data Início:</label>
+                        <input type="date" class="form-control" id="start_date" name="start_date" value="{{ start_date_filter or '' }}">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="end_date" class="form-label">Data Fim:</label>
+                        <input type="date" class="form-control" id="end_date" name="end_date" value="{{ end_date_filter or '' }}">
+                    </div>
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary">Aplicar Filtros</button>
+                        <a href="{{ url_for('admin.download_reports') }}" class="btn btn-secondary">Limpar Filtros</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% if download_logs %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Data/Hora Download</th>
+                    <th scope="col">Usuário</th>
+                    <th scope="col">Nome Completo</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Arquivo</th>
+                    <th scope="col">Planilha</th>
+                    <th scope="col">Versão</th>
+                    <th scope="col">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in download_logs %}
+                <tr>
+                    <td>{{ log.download_timestamp.strftime('%d/%m/%Y %H:%M:%S') }}</td>
+                    <td>{{ log.downloader.username }}</td>
+                    <td>{{ log.downloader.full_name or 'N/A' }}</td>
+                    <td>{{ log.downloader.email }}</td>
+                    <td>{{ log.file.filename }}</td>
+                    <td>{{ log.file.spreadsheet.name }}</td>
+                    <td>{{ log.file.version }}</td>
+                    <td>
+                        <a href="{{ url_for('download_file', file_id=log.file.id) }}" class="btn btn-sm btn-success">Baixar</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="alert alert-info" role="alert">
+            Nenhum download encontrado com os filtros aplicados.
+        </div>
+    {% endif %}
+{% endblock %}
