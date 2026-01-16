@@ -1,13 +1,13 @@
 from flask import Flask, render_template, request, redirect, url_for, make_response, send_from_directory, send_file, flash, jsonify
 from flask_login import LoginManager, login_required, current_user, login_user, logout_user
 from models import db
-from models.spreadsheet import Spreadsheet, File
+from models.spreadsheet import Spreadsheet, File, DownloadLog # Import DownloadLog
 from models.user import User
 from config import Config
 from blueprints.spreadsheet import spreadsheet_bp
 from blueprints.auth import auth_bp
 from blueprints.api import api_bp
-from blueprints.admin import admin_bp # Import the new admin blueprint
+from blueprints.admin import admin_bp
 from utils.validator import validate_spreadsheet
 from utils.report_generator import generate_pdf_report
 import pandas as pd
@@ -17,6 +17,7 @@ import io
 
 import re
 from sqlalchemy import func
+from datetime import datetime # Import datetime for DownloadLog
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -28,11 +29,11 @@ db.init_app(app)
 app.register_blueprint(spreadsheet_bp)
 app.register_blueprint(auth_bp)
 app.register_blueprint(api_bp)
-app.register_blueprint(admin_bp) # Register the admin blueprint
+app.register_blueprint(admin_bp)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = 'auth.login' # Define the login view
+login_manager.login_view = 'auth.login'
 
 
 @login_manager.user_loader
@@ -57,7 +58,7 @@ def index():
 
 
 @app.route('/upload', methods=['GET', 'POST'])
-@login_required  # Protect this route
+@login_required
 def upload_file():
     if request.method == 'POST':
         file = request.files['file']
@@ -65,8 +66,8 @@ def upload_file():
         if file:
             spreadsheet = Spreadsheet.query.get_or_404(spreadsheet_id)
 
-            # Permission check
-            if current_user not in spreadsheet.users:
+            # Permission check: Admin can upload to any, User only to assigned
+            if current_user.role != 'Admin' and current_user not in spreadsheet.users:
                 flash('Você não tem permissão para fazer upload para esta planilha.', 'danger')
                 return redirect(url_for('upload_file'))
 
@@ -98,7 +99,7 @@ def upload_file():
                 
                 new_version = (latest_version or 0) + 1
 
-                new_file = File(filename=filename, spreadsheet_id=spreadsheet_id, version=new_version)
+                new_file = File(filename=filename, spreadsheet_id=spreadsheet_id, user_id=current_user.id, version=new_version) # Assign current_user.id
                 db.session.add(new_file)
                 db.session.commit()
 
@@ -107,20 +108,24 @@ def upload_file():
                 
                 return render_template('success.html', file_id=new_file.id)
 
-    spreadsheets = current_user.spreadsheets # Only show accessible spreadsheets
+    # For 'User' role, only show accessible spreadsheets
+    if current_user.role == 'Admin':
+        spreadsheets = Spreadsheet.query.all()
+    else:
+        spreadsheets = current_user.spreadsheets
     return render_template('upload.html', spreadsheets=spreadsheets)
 
 @app.route('/report/download/<int:spreadsheet_id>/<filename>')
-@login_required # Protect this route
+@login_required
 def download_report(spreadsheet_id, filename):
     filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     
     spreadsheet = Spreadsheet.query.get_or_404(spreadsheet_id)
     
-    # Permission check
-    if current_user not in spreadsheet.users:
+    # Permission check: Admin can download any, User only assigned
+    if current_user.role != 'Admin' and current_user not in spreadsheet.users:
         flash('Você não tem permissão para baixar relatórios desta planilha.', 'danger')
-        return redirect(url_for('index')) # Redirect to a safe place
+        return redirect(url_for('index'))
 
     errors = validate_spreadsheet(filepath, spreadsheet.rules)
     
@@ -134,26 +139,37 @@ def download_report(spreadsheet_id, filename):
     )
 
 @app.route('/download/<file_id>')
-@login_required # Protect this route
+@login_required
 def download_file(file_id):
     file_record = File.query.get_or_404(file_id)
     
-    # Permission check
-    if current_user not in file_record.spreadsheet.users:
+    # Permission check: Admin can download any, User only assigned
+    if current_user.role != 'Admin' and current_user not in file_record.spreadsheet.users:
         flash('Você não tem permissão para baixar este arquivo.', 'danger')
-        return redirect(url_for('saved_files')) # Redirect to saved files page
+        return redirect(url_for('saved_files'))
+
+    # Log the download
+    download_log = DownloadLog(user_id=current_user.id, file_id=file_record.id)
+    db.session.add(download_log)
+    db.session.commit()
 
     return send_from_directory(app.config['PERMANENT_STORAGE'], file_id, as_attachment=True, download_name=file_record.filename)
 
+
 @app.route('/saved_files')
-@login_required # Protect this route
+@login_required
 def saved_files():
-    # Only show files from spreadsheets the current user has access to
-    accessible_spreadsheets_ids = [s.id for s in current_user.spreadsheets]
-    files = File.query.filter(File.spreadsheet_id.in_(accessible_spreadsheets_ids)).all()
+    # Admin sees all files, User sees only files from their assigned spreadsheets
+    if current_user.role == 'Admin':
+        files = File.query.all()
+    else:
+        accessible_spreadsheets_ids = [s.id for s in current_user.spreadsheets]
+        files = File.query.filter(File.spreadsheet_id.in_(accessible_spreadsheets_ids)).all()
     return render_template('saved_files.html', files=files)
+
 
 if __name__ == '__main__':
     with app.app_context():
+        print('Creating database tables...')
         create_tables()
     app.run(debug=True)

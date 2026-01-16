@@ -4,6 +4,11 @@ Esta é uma aplicação web para validar o formato e os tipos de dados de planil
 
 ## Funcionalidades
 
+-   **Controle de Acesso Baseado em Funções (RBAC):** Separação de permissões para usuários 'Admin' e 'User'.
+-   **Gerenciamento de Usuários:** Administradores podem adicionar, editar e excluir usuários. O registro público foi desativado.
+-   **Validação de Nomes de Arquivo:** Configure padrões Regex para o nome de arquivos por planilha.
+-   **Controle de Versão:** Acompanhe as versões dos arquivos enviados para cada planilha.
+-   **Rastreamento de Downloads:** Registra quem e quando baixou cada arquivo.
 -   Upload de planilhas nos formatos CSV ou XLSX.
 -   Definição de regras de validação para cada planilha, incluindo:
     -   Nome da coluna

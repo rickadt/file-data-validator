@@ -45,6 +45,17 @@ class File(db.Model):
     id = Column(String, primary_key=True, default=generate_uuid)
     filename = Column(String, nullable=False)
     spreadsheet_id = Column(Integer, ForeignKey('spreadsheets.id'), nullable=False)
-    upload_timestamp = Column(DateTime, default=datetime.now) # New field
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False) # New field for uploader
+    upload_timestamp = Column(DateTime, default=lambda: datetime.now()) # Changed to datetime.now(timezone.utc)
     version = Column(Integer, default=1) # New field
     spreadsheet = relationship("Spreadsheet", back_populates="files")
+    uploader = relationship("User", backref="uploaded_files") # Relationship to User model
+
+class DownloadLog(db.Model):
+    __tablename__ = 'download_logs'
+    id = Column(Integer, primary_key=True)
+    download_timestamp = Column(DateTime, default=lambda: datetime.now())
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    file_id = Column(String, ForeignKey('files.id'), nullable=False)
+    downloader = relationship("User", backref="download_logs")
+    file = relationship("File", backref="download_logs")
