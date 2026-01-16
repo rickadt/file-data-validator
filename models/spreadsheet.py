@@ -3,13 +3,15 @@ from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Enum, Table
 from sqlalchemy.orm import relationship
 import enum
 import uuid
-from datetime import datetime # Import datetime
+from datetime import datetime
 
 # Association table for many-to-many relationship between Spreadsheet and User
-spreadsheet_users = Table('spreadsheet_users', db.Model.metadata,
+spreadsheet_users = Table(
+    'spreadsheet_users', db.Model.metadata,
     Column('user_id', Integer, ForeignKey('users.id'), primary_key=True),
     Column('spreadsheet_id', Integer, ForeignKey('spreadsheets.id'), primary_key=True)
 )
+
 
 class DataType(enum.Enum):
     STRING = "STRING"
@@ -17,6 +19,7 @@ class DataType(enum.Enum):
     FLOAT = "FLOAT"
     DATE = "DATE"
     BOOLEAN = "BOOLEAN"
+
 
 class Spreadsheet(db.Model):
     __tablename__ = 'spreadsheets'
@@ -26,6 +29,7 @@ class Spreadsheet(db.Model):
     rules = relationship("ValidationRule", back_populates="spreadsheet", order_by="ValidationRule.id") # Ordered by ID
     files = relationship("File", back_populates="spreadsheet")
     users = relationship("User", secondary=spreadsheet_users, back_populates="spreadsheets")
+
 
 class ValidationRule(db.Model):
     __tablename__ = 'validation_rules'
@@ -37,19 +41,22 @@ class ValidationRule(db.Model):
     date_format = Column(String)
     required = Column(Boolean, default=True)
 
+
 def generate_uuid():
     return str(uuid.uuid4())
+
 
 class File(db.Model):
     __tablename__ = 'files'
     id = Column(String, primary_key=True, default=generate_uuid)
     filename = Column(String, nullable=False)
     spreadsheet_id = Column(Integer, ForeignKey('spreadsheets.id'), nullable=False)
-    user_id = Column(Integer, ForeignKey('users.id'), nullable=False) # New field for uploader
-    upload_timestamp = Column(DateTime, default=lambda: datetime.now()) # Changed to datetime.now(timezone.utc)
-    version = Column(Integer, default=1) # New field
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    upload_timestamp = Column(DateTime, default=lambda: datetime.now())
+    version = Column(Integer, default=1)
     spreadsheet = relationship("Spreadsheet", back_populates="files")
-    uploader = relationship("User", backref="uploaded_files") # Relationship to User model
+    uploader = relationship("User", backref="uploaded_files")
+
 
 class DownloadLog(db.Model):
     __tablename__ = 'download_logs'

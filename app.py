@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, make_response, send_from_directory, send_file, flash, jsonify
 from flask_login import LoginManager, login_required, current_user, login_user, logout_user
 from models import db
-from models.spreadsheet import Spreadsheet, File, DownloadLog # Import DownloadLog
+from models.spreadsheet import Spreadsheet, File, DownloadLog
 from models.user import User
 from config import Config
 from blueprints.spreadsheet import spreadsheet_bp
@@ -17,13 +17,13 @@ import io
 
 import re
 from sqlalchemy import func
-from datetime import datetime # Import datetime for DownloadLog
+from datetime import datetime
 
 app = Flask(__name__)
 app.config.from_object(Config)
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['PERMANENT_STORAGE'] = 'permanent_storage'
-app.config['SECRET_KEY'] = 'your_secret_key_here' # TODO: Change this to a strong secret key
+app.config['SECRET_KEY'] = 'your_secret_key_here'  # TODO: Change this to a strong secret key
 
 db.init_app(app)
 app.register_blueprint(spreadsheet_bp)
@@ -96,7 +96,7 @@ def upload_file():
                     File.spreadsheet_id == spreadsheet_id,
                     File.filename == filename
                 ).scalar()
-                
+
                 new_version = (latest_version or 0) + 1
 
                 new_file = File(filename=filename, spreadsheet_id=spreadsheet_id, user_id=current_user.id, version=new_version) # Assign current_user.id
@@ -105,7 +105,7 @@ def upload_file():
 
                 permanent_path = os.path.join(app.config['PERMANENT_STORAGE'], new_file.id)
                 shutil.move(filepath, permanent_path)
-                
+
                 return render_template('success.html', file_id=new_file.id)
 
     # For 'User' role, only show accessible spreadsheets
@@ -115,22 +115,23 @@ def upload_file():
         spreadsheets = current_user.spreadsheets
     return render_template('upload.html', spreadsheets=spreadsheets)
 
+
 @app.route('/report/download/<int:spreadsheet_id>/<filename>')
 @login_required
 def download_report(spreadsheet_id, filename):
     filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-    
+
     spreadsheet = Spreadsheet.query.get_or_404(spreadsheet_id)
-    
+
     # Permission check: Admin can download any, User only assigned
     if current_user.role != 'Admin' and current_user not in spreadsheet.users:
         flash('Você não tem permissão para baixar relatórios desta planilha.', 'danger')
         return redirect(url_for('index'))
 
     errors = validate_spreadsheet(filepath, spreadsheet.rules)
-    
+
     pdf_content = generate_pdf_report(errors, filename)
-    
+
     return send_file(
         io.BytesIO(pdf_content),
         mimetype='application/pdf',
@@ -138,11 +139,12 @@ def download_report(spreadsheet_id, filename):
         download_name=f'{filename}_report.pdf'
     )
 
+
 @app.route('/download/<file_id>')
 @login_required
 def download_file(file_id):
     file_record = File.query.get_or_404(file_id)
-    
+
     # Permission check: Admin can download any, User only assigned
     if current_user.role != 'Admin' and current_user not in file_record.spreadsheet.users:
         flash('Você não tem permissão para baixar este arquivo.', 'danger')

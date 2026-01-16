@@ -1,16 +1,18 @@
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db
-from .spreadsheet import spreadsheet_users # Import the association table
+from .spreadsheet import spreadsheet_users
+
 
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
+    full_name = db.Column(db.String(120), nullable=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    password_hash = db.Column(db.String(255)) # Increased length
+    password_hash = db.Column(db.String(255))
     sector = db.Column(db.String(80), nullable=True)
-    role = db.Column(db.String(20), default='User', nullable=False) # New role column
+    role = db.Column(db.String(20), default='User', nullable=False)
 
     spreadsheets = db.relationship("Spreadsheet", secondary=spreadsheet_users, back_populates="users")
 

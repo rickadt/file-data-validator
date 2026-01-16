@@ -7,11 +7,12 @@ from datetime import datetime
 
 api_bp = Blueprint('api', __name__, url_prefix='/api')
 
+
 @api_bp.route('/files', methods=['GET'])
 @login_required
 def get_all_files():
     accessible_spreadsheets_ids = [s.id for s in current_user.spreadsheets]
-    
+
     files = File.query.filter(
         File.spreadsheet_id.in_(accessible_spreadsheets_ids)
     ).order_by(File.upload_timestamp.desc()).all()
@@ -28,6 +29,7 @@ def get_all_files():
         })
     return jsonify(output)
 
+
 @api_bp.route('/files/latest', methods=['GET'])
 @login_required
 def get_latest_file():
@@ -39,7 +41,7 @@ def get_latest_file():
 
     if not latest_file:
         return jsonify({'message': 'Nenhum arquivo encontrado.'}), 404
-    
+
     output = {
         'id': latest_file.id,
         'filename': latest_file.filename,
@@ -49,6 +51,7 @@ def get_latest_file():
         'download_url': url_for('download_file', file_id=latest_file.id, _external=True)
     }
     return jsonify(output)
+
 
 @api_bp.route('/files/latest_version/<string:filename>', methods=['GET'])
 @login_required
@@ -62,7 +65,7 @@ def get_latest_version_of_file(filename):
 
     if not latest_version_file:
         return jsonify({'message': f"Nenhuma versão do arquivo '{filename}' encontrada."}), 404
-    
+
     output = {
         'id': latest_version_file.id,
         'filename': latest_version_file.filename,

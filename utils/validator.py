@@ -1,6 +1,7 @@
 import pandas as pd
 from models.spreadsheet import DataType
 
+
 def validate_spreadsheet(filepath, rules):
     errors = []
     try:

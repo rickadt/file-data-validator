@@ -1,5 +1,5 @@
 from app import app, db, create_tables
-from models.user import User # Import User model
+from models.user import User
 
 with app.app_context():
     create_tables()
@@ -8,8 +8,8 @@ with app.app_context():
     # Check if admin user already exists
     admin_user = User.query.filter_by(username='admin').first()
     if not admin_user:
-        new_admin = User(username='admin', email='admin@local', sector='Administration', role='Admin')
-        new_admin.set_password('admin') # Set password for admin
+        new_admin = User(username='admin', full_name='Admin', email='admin@local', sector='Administration', role='Admin')
+        new_admin.set_password('admin')
         db.session.add(new_admin)
         db.session.commit()
         print("Default admin user created: admin/admin")

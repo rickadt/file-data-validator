@@ -7,6 +7,7 @@ from functools import wraps
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 
+
 # Helper function to check if current user is Admin
 def admin_required(f):
     @wraps(f)
@@ -17,6 +18,7 @@ def admin_required(f):
             return redirect(url_for('index'))
         return f(*args, **kwargs)
     return decorated_function
+
 
 @admin_bp.route('/')
 @admin_required
@@ -30,27 +32,29 @@ def list_users():
     users = User.query.all()
     return render_template('admin/list_users.html', users=users)
 
+
 @admin_bp.route('/users/add', methods=['GET', 'POST'])
 @admin_required
 def add_user():
     if request.method == 'POST':
         username = request.form['username']
+        full_name = request.form['full_name']
         email = request.form['email']
         sector = request.form['sector']
         password = request.form['password']
-        role = request.form.get('role', 'User') # Default to 'User'
+        role = request.form.get('role', 'User')  # Default to 'User'
 
         user = User.query.filter_by(username=username).first()
         if user:
             flash('Nome de usuário já existe.', 'danger')
             return redirect(url_for('admin.add_user'))
-        
+
         user = User.query.filter_by(email=email).first()
         if user:
             flash('Email já registrado.', 'danger')
             return redirect(url_for('admin.add_user'))
 
-        new_user = User(username=username, email=email, sector=sector, role=role)
+        new_user = User(username=username, full_name=full_name, email=email, sector=sector, role=role)
         new_user.set_password(password)
         db.session.add(new_user)
         db.session.commit()
@@ -58,20 +62,22 @@ def add_user():
         return redirect(url_for('admin.list_users'))
     return render_template('admin/add_user.html')
 
+
 @admin_bp.route('/users/<int:user_id>/edit', methods=['GET', 'POST'])
 @admin_required
 def edit_user(user_id):
     user = User.query.get_or_404(user_id)
-    spreadsheets = Spreadsheet.query.all() # Fetch all spreadsheets for assignment
+    spreadsheets = Spreadsheet.query.all()  # Fetch all spreadsheets for assignment
 
     if request.method == 'POST':
         user.username = request.form['username']
+        user.full_name = request.form['full_name']
         user.email = request.form['email']
         user.sector = request.form['sector']
         user.role = request.form['role']
         if 'password' in request.form and request.form['password']:
             user.set_password(request.form['password'])
-        
+
         # Update spreadsheet access
         selected_spreadsheet_ids = [int(sid) for sid in request.form.getlist('spreadsheets')]
         user.spreadsheets = [s for s in spreadsheets if s.id in selected_spreadsheet_ids]
@@ -83,6 +89,7 @@ def edit_user(user_id):
     # For GET request, pre-select current user's spreadsheets
     selected_spreadsheets = [s.id for s in user.spreadsheets]
     return render_template('admin/edit_user.html', user=user, spreadsheets=spreadsheets, selected_spreadsheets=selected_spreadsheets)
+
 
 @admin_bp.route('/users/<int:user_id>/delete', methods=['POST'])
 @admin_required

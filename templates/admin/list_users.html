@@ -10,9 +10,10 @@
         <thead>
             <tr>
                 <th scope="col">ID</th>
-                <th scope="col">Nome de Usuário</th>
+                <th scope="col">Nome Completo</th>
                 <th scope="col">Email</th>
                 <th scope="col">Setor</th>
+                <th scope="col">Usuário</th>
                 <th scope="col">Função</th>
                 <th scope="col">Ações</th>
             </tr>
@@ -21,9 +22,10 @@
             {% for user in users %}
             <tr>
                 <td>{{ user.id }}</td>
-                <td>{{ user.username }}</td>
+                <td>{{ user.full_name }}</td>
                 <td>{{ user.email }}</td>
                 <td>{{ user.sector }}</td>
+                <td>{{ user.username }}</td>
                 <td>{{ user.role }}</td>
                 <td>
                     <a href="{{ url_for('admin.edit_user', user_id=user.id) }}" class="btn btn-sm btn-info me-2">Editar</a>

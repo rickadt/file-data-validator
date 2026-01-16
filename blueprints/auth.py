@@ -5,13 +5,12 @@ from models.user import User
 
 auth_bp = Blueprint('auth', __name__)
 
-# Removed public /register route
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
-        
+
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -26,6 +25,7 @@ def login():
         login_user(user, remember=remember)
         return redirect(url_for('index'))
     return render_template('auth/login.html')
+
 
 @auth_bp.route('/logout')
 @login_required
