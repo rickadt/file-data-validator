@@ -10,6 +10,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(255)) # Increased length
     sector = db.Column(db.String(80), nullable=True)
+    role = db.Column(db.String(20), default='User', nullable=False) # New role column
 
     spreadsheets = db.relationship("Spreadsheet", secondary=spreadsheet_users, back_populates="users")
 

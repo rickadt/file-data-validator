@@ -5,34 +5,7 @@ from models.user import User
 
 auth_bp = Blueprint('auth', __name__)
 
-@auth_bp.route('/register', methods=['GET', 'POST'])
-def register():
-    if current_user.is_authenticated:
-        return redirect(url_for('index'))
-    
-    if request.method == 'POST':
-        username = request.form['username']
-        email = request.form['email']
-        sector = request.form['sector']
-        password = request.form['password']
-
-        user = User.query.filter_by(username=username).first()
-        if user:
-            flash('Nome de usuário já existe.', 'danger')
-            return redirect(url_for('auth.register'))
-        
-        user = User.query.filter_by(email=email).first()
-        if user:
-            flash('Email já registrado.', 'danger')
-            return redirect(url_for('auth.register'))
-
-        new_user = User(username=username, email=email, sector=sector)
-        new_user.set_password(password)
-        db.session.add(new_user)
-        db.session.commit()
-        flash('Registro bem-sucedido! Por favor, faça login.', 'success')
-        return redirect(url_for('auth.login'))
-    return render_template('auth/register.html')
+# Removed public /register route
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():

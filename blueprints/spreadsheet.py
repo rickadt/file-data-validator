@@ -3,18 +3,31 @@ from flask_login import login_required, current_user
 from models import db
 from models.spreadsheet import Spreadsheet, ValidationRule, DataType
 from models.user import User # Import User model
+from functools import wraps # Import wraps for decorator
 
 spreadsheet_bp = Blueprint('spreadsheet', __name__)
 
+# Helper function to check if current user is Admin
+def admin_required(f):
+    @wraps(f)
+    @login_required
+    def decorated_function(*args, **kwargs):
+        if not current_user.is_authenticated or current_user.role != 'Admin':
+            flash('Você não tem permissão para acessar esta página.', 'danger')
+            return redirect(url_for('index'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+
 @spreadsheet_bp.route('/spreadsheets')
-@login_required
+@admin_required # Only Admin can list/manage all spreadsheets
 def list_spreadsheets():
-    # Only show spreadsheets the current user has access to
-    spreadsheets = current_user.spreadsheets
+    # Admin can see all spreadsheets
+    spreadsheets = Spreadsheet.query.all() # Changed from current_user.spreadsheets
     return render_template('spreadsheets/list.html', spreadsheets=spreadsheets)
 
 @spreadsheet_bp.route('/spreadsheets/add', methods=['GET', 'POST'])
-@login_required
+@admin_required # Only Admin can add spreadsheets
 def add_spreadsheet():
     users = User.query.all() # Fetch all users
     if request.method == 'POST':
@@ -38,14 +51,11 @@ def add_spreadsheet():
 
 
 @spreadsheet_bp.route('/spreadsheets/<int:spreadsheet_id>/edit', methods=['GET', 'POST'])
-@login_required
+@admin_required # Only Admin can edit spreadsheets
 def edit_spreadsheet(spreadsheet_id):
     spreadsheet = Spreadsheet.query.get_or_404(spreadsheet_id)
-    # Check if current user has access to this spreadsheet
-    if current_user not in spreadsheet.users:
-        flash('Você não tem permissão para editar esta planilha.', 'danger')
-        return redirect(url_for('spreadsheet.list_spreadsheets'))
-
+    # No need to check spreadsheet.users here, as only Admin can access this route
+    
     users = User.query.all()  # Fetch all users for selection
 
     if request.method == 'POST':
@@ -66,13 +76,10 @@ def edit_spreadsheet(spreadsheet_id):
 
 
 @spreadsheet_bp.route('/spreadsheets/<int:spreadsheet_id>/rules/add', methods=['GET', 'POST'])
-@login_required
+@admin_required # Only Admin can add rules
 def add_rule(spreadsheet_id):
     spreadsheet = Spreadsheet.query.get_or_404(spreadsheet_id)
-    # Check if current user has access to this spreadsheet
-    if current_user not in spreadsheet.users:
-        flash('Você não tem permissão para adicionar regras a esta planilha.', 'danger')
-        return redirect(url_for('spreadsheet.list_spreadsheets'))
+    # No need to check spreadsheet.users here, as only Admin can access this route
 
     if request.method == 'POST':
         column_name = request.form['column_name']
@@ -92,15 +99,11 @@ def add_rule(spreadsheet_id):
         return redirect(url_for('spreadsheet.list_spreadsheets'))
     return render_template('spreadsheets/add_rule.html', spreadsheet=spreadsheet, data_types=DataType)
 
-
 @spreadsheet_bp.route('/spreadsheets/rules/<int:rule_id>/edit', methods=['GET', 'POST'])
-@login_required
+@admin_required # Only Admin can edit rules
 def edit_rule(rule_id):
     rule = ValidationRule.query.get_or_404(rule_id)
-    # Check if current user has access to this spreadsheet
-    if current_user not in rule.spreadsheet.users:
-        flash('Você não tem permissão para editar esta regra.', 'danger')
-        return redirect(url_for('spreadsheet.list_spreadsheets'))
+    # No need to check rule.spreadsheet.users here, as only Admin can access this route
 
     if request.method == 'POST':
         rule.column_name = request.form['column_name']
@@ -112,15 +115,11 @@ def edit_rule(rule_id):
         return redirect(url_for('spreadsheet.list_spreadsheets'))
     return render_template('spreadsheets/edit_rule.html', rule=rule, spreadsheet=rule.spreadsheet, data_types=DataType)
 
-
 @spreadsheet_bp.route('/spreadsheets/rules/<int:rule_id>/delete', methods=['POST'])
-@login_required
+@admin_required # Only Admin can delete rules
 def delete_rule(rule_id):
     rule = ValidationRule.query.get_or_404(rule_id)
-    # Check if current user has access to this spreadsheet
-    if current_user not in rule.spreadsheet.users:
-        flash('Você não tem permissão para excluir esta regra.', 'danger')
-        return redirect(url_for('spreadsheet.list_spreadsheets'))
+    # No need to check rule.spreadsheet.users here, as only Admin can access this route
 
     db.session.delete(rule)
     db.session.commit()

@@ -4,16 +4,20 @@
 
 {% block content %}
     <h1 class="mb-4">Planilhas</h1>
-    <a href="{{ url_for('spreadsheet.add_spreadsheet') }}" class="btn btn-primary mb-3">Adicionar Planilha</a>
+    {% if current_user.role == 'Admin' %}
+        <a href="{{ url_for('spreadsheet.add_spreadsheet') }}" class="btn btn-primary mb-3">Adicionar Planilha</a>
+    {% endif %}
     <div class="list-group">
         {% for spreadsheet in spreadsheets %}
             <div class="list-group-item mb-3">
                 <div class="d-flex w-100 justify-content-between">
                     <h5 class="mb-1">{{ spreadsheet.name }}</h5>
+                    {% if current_user.role == 'Admin' %}
                     <small>
                         <a href="{{ url_for('spreadsheet.edit_spreadsheet', spreadsheet_id=spreadsheet.id) }}" class="btn btn-sm btn-info me-2">Editar Planilha</a>
                         <a href="{{ url_for('spreadsheet.add_rule', spreadsheet_id=spreadsheet.id) }}" class="btn btn-sm btn-outline-secondary">Adicionar Regra</a>
                     </small>
+                    {% endif %}
                 </div>
                 {% if spreadsheet.filename_pattern %}
                     <p class="mb-1">Padrão de Nome do Arquivo: <code>{{ spreadsheet.filename_pattern }}</code></p>
@@ -37,10 +41,12 @@
                         {% for rule in spreadsheet.rules %}
                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                 <span>{{ rule.column_name }} ({{ rule.data_type.value }}) {% if rule.date_format %}, Formato: {{ rule.date_format }} {% endif %} {% if rule.required %}(Obrigatório){% else %}(Opcional){% endif %}</span>
+                                {% if current_user.role == 'Admin' %}
                                 <small>
                                     <a href="{{ url_for('spreadsheet.edit_rule', rule_id=rule.id) }}" class="btn btn-sm btn-outline-primary me-2">Editar</a>
                                     <a href="{{ url_for('spreadsheet.delete_rule', rule_id=rule.id) }}" class="btn btn-sm btn-outline-danger">Excluir</a>
                                 </small>
+                                {% endif %}
                             </li>
                         {% endfor %}
                     </ul>

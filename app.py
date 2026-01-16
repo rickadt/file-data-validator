@@ -6,7 +6,8 @@ from models.user import User
 from config import Config
 from blueprints.spreadsheet import spreadsheet_bp
 from blueprints.auth import auth_bp
-from blueprints.api import api_bp # Import the new API blueprint
+from blueprints.api import api_bp
+from blueprints.admin import admin_bp # Import the new admin blueprint
 from utils.validator import validate_spreadsheet
 from utils.report_generator import generate_pdf_report
 import pandas as pd
@@ -14,8 +15,8 @@ import os
 import shutil
 import io
 
-import re # Import the regular expression module
-from sqlalchemy import func # Import func for max
+import re
+from sqlalchemy import func
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -26,7 +27,8 @@ app.config['SECRET_KEY'] = 'your_secret_key_here' # TODO: Change this to a stron
 db.init_app(app)
 app.register_blueprint(spreadsheet_bp)
 app.register_blueprint(auth_bp)
-app.register_blueprint(api_bp) # Register the API blueprint
+app.register_blueprint(api_bp)
+app.register_blueprint(admin_bp) # Register the admin blueprint
 
 login_manager = LoginManager()
 login_manager.init_app(app)

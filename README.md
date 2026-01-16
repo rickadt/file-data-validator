@@ -56,6 +56,24 @@ Esta é uma aplicação web para validar o formato e os tipos de dados de planil
 
 ## Como Usar
 
+### Controle de Acesso (RBAC)
+
+A aplicação implementa um controle de acesso baseado em funções (RBAC) com dois tipos de usuários:
+
+-   **Admin:** Pode criar, editar e excluir configurações de planilhas e suas regras de validação. Também pode fazer upload e download de *qualquer* planilha.
+-   **User:** Pode apenas fazer upload e download das planilhas para as quais possui permissão de acesso (definida pelos administradores).
+
+### Usuário Administrador Padrão
+
+Após executar o `python create_db.py` pela primeira vez, um usuário administrador padrão será criado automaticamente com as seguintes credenciais:
+
+-   **Usuário (username):** `admin`
+-   **Email:** `admin@local`
+-   **Senha:** `admin`
+-   **Função (role):** `Admin`
+
+Você pode usar essas credenciais para fazer login e começar a configurar planilhas e regras. É **altamente recomendável** que você altere a senha padrão ou crie novos usuários administradores assim que possível.
+
 1.  **Crie uma nova configuração de planilha:**
     -   Vá para a página "Planilhas".
     -   Clique em "Adicionar Planilha" e dê um nome a ela.

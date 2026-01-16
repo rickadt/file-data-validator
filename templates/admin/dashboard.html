@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+    <h1 class="mb-4">Painel de Administração</h1>
+    <div class="list-group">
+        <a href="{{ url_for('admin.list_users') }}" class="list-group-item list-group-item-action">Gerenciar Usuários</a>
+        <a href="{{ url_for('spreadsheet.list_spreadsheets') }}" class="list-group-item list-group-item-action">Gerenciar Planilhas e Regras</a>
+        <!-- Add more admin links here -->
+    </div>
+{% endblock %}

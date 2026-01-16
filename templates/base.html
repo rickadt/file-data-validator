@@ -22,9 +22,14 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('upload_file') }}">Upload</a>
                     </li>
+                    {% if current_user.is_authenticated and current_user.role == 'Admin' %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('spreadsheet.list_spreadsheets') }}">Planilhas</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin.admin_dashboard') }}">Administração</a>
+                    </li>
+                    {% endif %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('saved_files') }}">Arquivos Salvos</a>
                     </li>
@@ -40,9 +45,6 @@
                     {% else %}
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('auth.login') }}">Entrar</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('auth.register') }}">Registrar</a>
                         </li>
                     {% endif %}
                 </ul>

@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar Usuário{% endblock %}
+
+{% block content %}
+    <h1 class="mb-4">Editar Usuário: {{ user.username }}</h1>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    <form method="post">
+        <div class="mb-3">
+            <label for="username" class="form-label">Nome de Usuário</label>
+            <input type="text" class="form-control" id="username" name="username" value="{{ user.username }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="sector" class="form-label">Setor</label>
+            <input type="text" class="form-control" id="sector" name="sector" value="{{ user.sector or '' }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">Nova Senha (deixe em branco para não alterar)</label>
+            <input type="password" class="form-control" id="password" name="password">
+        </div>
+        <div class="mb-3">
+            <label for="role" class="form-label">Função</label>
+            <select name="role" id="role" class="form-select">
+                <option value="User" {% if user.role == 'User' %}selected{% endif %}>User</option>
+                <option value="Admin" {% if user.role == 'Admin' %}selected{% endif %}>Admin</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="spreadsheets" class="form-label">Acesso às Planilhas:</label>
+            <select name="spreadsheets" id="spreadsheets" class="form-select" multiple>
+                {% for spreadsheet in spreadsheets %}
+                    <option value="{{ spreadsheet.id }}" {% if spreadsheet.id in selected_spreadsheets %}selected{% endif %}>{{ spreadsheet.name }}</option>
+                {% endfor %}
+            </select>
+            <div class="form-text">Segure CTRL/CMD para selecionar múltiplos.</div>
+        </div>
+        <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+        <a href="{{ url_for('admin.list_users') }}" class="btn btn-secondary">Cancelar</a>
+    </form>
+{% endblock %}
