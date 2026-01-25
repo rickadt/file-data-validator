@@ -2,6 +2,8 @@
 
 Esta é uma aplicação web para validar o formato e os tipos de dados de planilhas.
 
+Criado para resolver o problema nos dados e metadados nos arquivos enviados por usuários para uma pipeline de ETL
+
 ## Funcionalidades
 
 -   **Controle de Acesso Baseado em Funções (RBAC):** Separação de permissões para usuários 'Admin' e 'User'.
