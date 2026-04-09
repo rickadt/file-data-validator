@@ -37,8 +37,8 @@ Criado para resolver o problema nos dados e metadados nos arquivos enviados por 
 
 1.  **Clone o repositório:**
     ```bash
-    git clone <url-do-repositorio>
-    cd validador-planilha
+    git clone https://github.com/rickadt/file-data-validator.git
+    cd file-data-validator
     ```
 
 2.  **Inicie o banco de dados PostgreSQL:**
